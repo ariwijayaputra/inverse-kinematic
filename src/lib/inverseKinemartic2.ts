@@ -10,7 +10,7 @@ export default function inverseKinematics2(
 	armLength2: number
 ): [number, number, number, Point, Point] {
 	const { x, y, z } = targetPosition;
-	const r = Math.sqrt(x ** 2 + y ** 2);
+	// const r = Math.sqrt(x ** 2 + y ** 2);
 
 	// Calculate base rotation (yaw)
 	const baseRotation = Math.atan2(y, x);

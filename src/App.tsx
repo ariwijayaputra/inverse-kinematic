@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import "./App.css";
 import inverseKinematics from "./lib/inverseKinematic";
 import { toast } from "react-toastify";
