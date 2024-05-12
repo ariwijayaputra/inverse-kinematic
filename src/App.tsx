@@ -24,19 +24,33 @@ function App() {
 		console.log(Lfemur, Ltibia, X, Y);
 		try {
 			if (Lfemur && Ltibia) {
-				const [a, b, c, newJoint] = inverseKinematics(X, Y, Z, Lfemur, Ltibia);
+				const [a, b, c, newJoint] = inverseKinematics(
+					X,
+					Y,
+					Z,
+					Lcoxa,
+					Lfemur,
+					Ltibia
+				);
 				console.log(a, b, c, newJoint);
 				// console.log(forwardKinematics(a, b, Lfemur, Ltibia));
 				setCoxa(a);
 				setFemur(b);
 				setTibia(c);
 				setJoints(newJoint);
-				const joint2X = newJoint[1].x * Math.cos((a * Math.PI) / 180);
-				const joint2Y = newJoint[1].x * Math.sin((a * Math.PI) / 180);
+				const joint1X = newJoint[1].x * Math.cos((a * Math.PI) / 180);
+				const joint1Y = newJoint[1].x * Math.sin((a * Math.PI) / 180);
+				const joint2X = newJoint[2].x * Math.cos((a * Math.PI) / 180);
+				const joint2Y = newJoint[2].x * Math.sin((a * Math.PI) / 180);
+				const joint3X = newJoint[3].x * Math.cos((a * Math.PI) / 180);
+				const joint3Y = newJoint[3].x * Math.sin((a * Math.PI) / 180);
 				setJointsXZ([
 					{ x: 0, y: 0 },
+					// { x: Lcoxa * -1, y: 0 },
+					{ x: joint1X, y: joint1Y },
 					{ x: joint2X, y: joint2Y },
-					{ x: X * -1, y: newJoint[2].z },
+					{ x: joint3X, y: joint3Y },
+					// { x: X * -1 - Lcoxa, y:Z },
 				]);
 			}
 		} catch (error: any) {
@@ -242,7 +256,11 @@ function App() {
 						}}>
 						{"x -> and y^ (relative to each leg)"}
 						{joints && (
-							<ChartKinematic joints={joints} range={Lfemur + Ltibia} />
+							<ChartKinematic
+								joints={joints}
+								range={Lfemur + Ltibia + Lcoxa}
+								pointBg={["#FDD", "#0F0", "#00F", "#F00"]}
+							/>
 						)}
 					</div>
 					<div
@@ -257,8 +275,8 @@ function App() {
 						{jointsXZ && (
 							<ChartKinematic
 								joints={jointsXZ}
-								range={Lfemur + Ltibia}
-								pointBg={["#FDD", "#F00"]}
+								range={Lfemur + Ltibia + Lcoxa}
+								pointBg={["#FDD", "#0F0", "#00F", "#F00"]}
 							/>
 						)}
 					</div>

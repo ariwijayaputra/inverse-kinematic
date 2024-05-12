@@ -11,16 +11,19 @@ export default function inverseKinematics(
 	x: number,
 	y: number,
 	z: number,
+	l0: number = 0,
 	l1: number,
 	l2: number
 ): [number, number, number, { x: number; y: number; z: number }[]] {
 	// find the needed leg length to reach (x,z)
-	const legLength = Math.sqrt(x ** 2 + z ** 2);
-	console.log(legLength);
+
+	let legLength = Math.sqrt(x ** 2 + z ** 2);
+	console.log("legLength", legLength);
 	// find how much degree the leg needed to rotate to reach x,z
 	const radians = Math.acos(z / legLength);
-	const theta0Deg = radians * (180 / Math.PI) - 90;
+	const theta0Deg = radians * (180 / Math.PI) - 90 || 0;
 
+	legLength = legLength - l0;
 	x = legLength * -1;
 	const c2 = (x ** 2 + y ** 2 - l1 ** 2 - l2 ** 2) / (2 * l1 * l2);
 
@@ -39,22 +42,26 @@ export default function inverseKinematics(
 	let theta1Deg = (theta1Rad * 180) / Math.PI;
 
 	// Calculate the positions of each joint
-	const joint1Position: { x: number; y: number; z: 0 } = { x: 0, y: 0, z: 0 };
+	const joint1Position: { x: number; y: number; z: 0 } = { x: 0 - l0, y: 0, z: 0 };
 	const joint2X = l1 * Math.cos(theta1Rad);
 	const joint2Y = l1 * Math.sin(theta1Rad);
 	const joint2Z = joint2X * Math.tan((theta0Deg * Math.PI) / 180);
 	console.log(joint2X, "joint2x", theta0Deg, "theta0Deg");
 	const joint2Position: { x: number; y: number; z: number } = {
-		x: joint2X,
+		x: joint2X - l0,
 		y: joint2Y,
 		z: joint2Z,
 	};
-	const endEffectorPosition: { x: number; y: number; z: number } = { x: x, y: y, z: z };
+	const endEffectorPosition: { x: number; y: number; z: number } = {
+		x: x - l0,
+		y: y,
+		z: z,
+	};
 
 	return [
 		theta0Deg,
 		theta1Deg,
 		theta2Deg,
-		[joint1Position, joint2Position, endEffectorPosition],
+		[{ x: 0, y: 0, z: 0 }, joint1Position, joint2Position, endEffectorPosition],
 	];
 }
