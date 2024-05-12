@@ -21,9 +21,11 @@ ChartJS.register(
 export default function ChartKinematic({
 	joints,
 	range,
+	pointBg,
 }: {
 	joints: { x: number; y: number }[];
 	range: number;
+	pointBg?: string[];
 }) {
 	// const chartRef = useRef<HTMLCanvasElement | null>(null);
 	// useEffect(() => {
@@ -42,8 +44,8 @@ export default function ChartKinematic({
 				datasets: [
 					{
 						data: joints,
-						borderColor: ["#FDD", "#0F0", "#F00"],
-						pointBackgroundColor: ["#FDD", "#0F0", "#F00"],
+						borderColor: ["#FDD"],
+						pointBackgroundColor: pointBg || ["#0F0", "#00F", "#F00"],
 						pointRadius: 5,
 						showLine: true,
 					},

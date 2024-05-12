@@ -16,9 +16,9 @@ export default function inverseKinematics(
 ): [number, number, number, { x: number; y: number; z: number }[]] {
 	// find the needed leg length to reach (x,z)
 	const legLength = Math.sqrt(x ** 2 + z ** 2);
+	console.log(legLength);
 	// find how much degree the leg needed to rotate to reach x,z
-	const diagonal = Math.sqrt(legLength ** 2 + z ** 2);
-	const radians = Math.acos(z / diagonal);
+	const radians = Math.acos(z / legLength);
 	const theta0Deg = radians * (180 / Math.PI) - 90;
 
 	x = legLength * -1;
@@ -52,9 +52,9 @@ export default function inverseKinematics(
 	const endEffectorPosition: { x: number; y: number; z: number } = { x: x, y: y, z: z };
 
 	return [
+		theta0Deg,
 		theta1Deg,
 		theta2Deg,
-		theta0Deg,
 		[joint1Position, joint2Position, endEffectorPosition],
 	];
 }

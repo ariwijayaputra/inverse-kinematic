@@ -3,32 +3,41 @@ import "./App.css";
 import inverseKinematics from "./lib/inverseKinematic";
 import { toast } from "react-toastify";
 import ChartKinematic from "./components/chartKinematic";
-
 function App() {
 	const [joints, setJoints] = useState<
 		{ x: number; y: number; z: number }[] | undefined
 	>();
-	const [alpha, setAlpha] = useState<number>(0);
-	const [beta, setBeta] = useState<number>(0);
-	const [gamma, setGamma] = useState<number>(0);
+	const [jointsXZ, setJointsXZ] = useState<{ x: number; y: number }[] | undefined>();
+
+	const [coxa, setCoxa] = useState<number>(0);
+	const [tibia, setTibia] = useState<number>(0);
+	const [femur, setFemur] = useState<number>(0);
 	const [X, setX] = useState<number>(0);
 	const [Y, setY] = useState<number>(0);
 	const [Z, setZ] = useState<number>(0);
-	const [L1, setL1] = useState<number>(0);
-	const [L2, setL2] = useState<number>(0);
+	const [Lfemur, setLfemur] = useState<number>(0);
+	const [Ltibia, setLtibia] = useState<number>(0);
+	const [Lcoxa, setLcoxa] = useState<number>(0);
 
 	const handleCalculate = (e?: FormEvent) => {
 		e?.preventDefault();
-		console.log(L1, L2, X, Y);
+		console.log(Lfemur, Ltibia, X, Y);
 		try {
-			if (L1 && L2) {
-				const [a, b, c, newJoint] = inverseKinematics(X, Y, Z, L1, L2);
+			if (Lfemur && Ltibia) {
+				const [a, b, c, newJoint] = inverseKinematics(X, Y, Z, Lfemur, Ltibia);
 				console.log(a, b, c, newJoint);
-				// console.log(forwardKinematics(a, b, L1, L2));
-				setAlpha(a);
-				setBeta(b);
-				setGamma(c);
+				// console.log(forwardKinematics(a, b, Lfemur, Ltibia));
+				setCoxa(a);
+				setFemur(b);
+				setTibia(c);
 				setJoints(newJoint);
+				const joint2X = newJoint[1].x * Math.cos((a * Math.PI) / 180);
+				const joint2Y = newJoint[1].x * Math.sin((a * Math.PI) / 180);
+				setJointsXZ([
+					{ x: 0, y: 0 },
+					{ x: joint2X, y: joint2Y },
+					{ x: X * -1, y: newJoint[2].z },
+				]);
 			}
 		} catch (error: any) {
 			toast(error.message as string, { theme: "dark", type: "error" });
@@ -36,7 +45,7 @@ function App() {
 	};
 	// useEffect(() => {
 	// 	handleCalculate();
-	// }, [X, Y, Z, L1, L2]);
+	// }, [X, Y, Z, Lfemur, Ltibia]);
 	return (
 		<>
 			<div style={{ display: "flex", flexDirection: "row" }}>
@@ -68,13 +77,15 @@ function App() {
 									flexDirection: "row",
 									gap: "8px",
 								}}>
-								<span style={{ width: "28px" }}>L1</span>
+								<span style={{ width: "110px", textAlign: "start" }}>
+									L. coxa
+								</span>
 								<input
-									value={L1}
-									onChange={(e) => setL1(parseInt(e.target.value))}
+									value={Lcoxa}
+									onChange={(e) => setLcoxa(parseInt(e.target.value))}
 									style={{ width: "100%" }}
 									type="number"
-									name="l1"></input>
+									name="Lcoxa"></input>
 							</div>
 							<div
 								style={{
@@ -83,13 +94,32 @@ function App() {
 									flexDirection: "row",
 									gap: "8px",
 								}}>
-								<span style={{ width: "28px" }}>L2</span>
+								<span style={{ width: "110px", textAlign: "start" }}>
+									L. femur
+								</span>
 								<input
-									value={L2}
-									onChange={(e) => setL2(parseInt(e.target.value))}
+									value={Lfemur}
+									onChange={(e) => setLfemur(parseInt(e.target.value))}
 									style={{ width: "100%" }}
 									type="number"
-									name="l2"></input>
+									name="lfemur"></input>
+							</div>
+							<div
+								style={{
+									display: "flex",
+									width: "100%",
+									flexDirection: "row",
+									gap: "8px",
+								}}>
+								<span style={{ width: "110px", textAlign: "start" }}>
+									L. tibia
+								</span>
+								<input
+									value={Ltibia}
+									onChange={(e) => setLtibia(parseInt(e.target.value))}
+									style={{ width: "100%" }}
+									type="number"
+									name="Ltibia"></input>
 							</div>
 						</div>
 						<div
@@ -106,7 +136,9 @@ function App() {
 									flexDirection: "row",
 									gap: "8px",
 								}}>
-								<span style={{ width: "28px" }}>X</span>
+								<span style={{ width: "110px", textAlign: "start" }}>
+									X
+								</span>
 								<input
 									value={X}
 									onChange={(e) => setX(parseInt(e.target.value))}
@@ -121,7 +153,9 @@ function App() {
 									flexDirection: "row",
 									gap: "8px",
 								}}>
-								<span style={{ width: "28px" }}>Y</span>
+								<span style={{ width: "110px", textAlign: "start" }}>
+									Y
+								</span>
 								<input
 									value={Y}
 									onChange={(e) => setY(parseInt(e.target.value))}
@@ -136,7 +170,9 @@ function App() {
 									flexDirection: "row",
 									gap: "8px",
 								}}>
-								<span style={{ width: "28px" }}>Z</span>
+								<span style={{ width: "110px", textAlign: "start" }}>
+									Z
+								</span>
 								<input
 									value={Z}
 									onChange={(e) => setZ(parseInt(e.target.value))}
@@ -165,7 +201,7 @@ function App() {
 									background: "#fdd",
 									padding: "4px",
 								}}></div>
-							<p>degree 1: {alpha}</p>
+							<p>coxa : {coxa.toFixed(2)}°</p>
 						</div>
 						<div
 							style={{
@@ -178,7 +214,7 @@ function App() {
 									background: "green",
 									padding: "4px",
 								}}></div>
-							<p>degree 2: {beta}</p>
+							<p>femur: {femur.toFixed(2)}°</p>
 						</div>
 						<div
 							style={{
@@ -191,7 +227,7 @@ function App() {
 									background: "blue",
 									padding: "4px",
 								}}></div>
-							<p>degree 3: {gamma}</p>
+							<p>tibia: {tibia.toFixed(2)}°</p>
 						</div>
 					</div>
 				</div>
@@ -204,8 +240,10 @@ function App() {
 							width: "400px",
 							height: "400px",
 						}}>
-						{"x -> and y^"}
-						{joints && <ChartKinematic joints={joints} range={L1 + L2} />}
+						{"x -> and y^ (relative to each leg)"}
+						{joints && (
+							<ChartKinematic joints={joints} range={Lfemur + Ltibia} />
+						)}
 					</div>
 					<div
 						className="card"
@@ -215,18 +253,28 @@ function App() {
 							width: "400px",
 							height: "400px",
 						}}>
-						{"x -> and z^ (from top)"}
-						{joints && (
+						{"x -> and z^ (from top. relative to robot)"}
+						{jointsXZ && (
 							<ChartKinematic
-								joints={[
-									{ x: 0, y: 0 },
-									{ x: joints[1].x, y: joints[1].z },
-									{ y: joints[2].z, x: joints[2].x },
-								]}
-								range={L1 + L2}
+								joints={jointsXZ}
+								range={Lfemur + Ltibia}
+								pointBg={["#FDD", "#F00"]}
 							/>
 						)}
 					</div>
+				</div>
+			</div>
+			<div style={{ flexDirection: "column", display: "flex" }}>
+				<h2>Refference</h2>
+				<div
+					className="card"
+					style={{
+						display: "flex",
+						flexDirection: "column",
+						width: "fit-content",
+					}}>
+					<img src="/coxatibiafemur.png" alt="leg structure"></img>
+					<p>leg structure</p>
 				</div>
 			</div>
 		</>
