@@ -221,7 +221,7 @@ function App() {
 								joints={[
 									{ x: 0, y: 0 },
 									{ x: joints[1].x, y: joints[1].z },
-									{ y: Z, x: joints[2].x },
+									{ y: joints[2].z, x: joints[2].x },
 								]}
 								range={L1 + L2}
 							/>

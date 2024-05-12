@@ -5,7 +5,7 @@
  * @param y - The desired y-coordinate of the end-effector position.
  * @param l1 - The length of the first link.
  * @param l2 - The length of the second link.
- * @returns An array containing the joint angles [theta1, theta2] in radians.
+ * @returns theta 1 , 2, and 3 in degree, and position of each joint
  */
 export default function inverseKinematics(
 	x: number,
